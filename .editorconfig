@@ -1,0 +1,20 @@
+# Chặn việc tìm kiếm các file cấu hình ở các thư mục cha cao hơn
+root = true
+
+# Áp dụng cho tất cả các file trong repo
+[*]
+indent_style = space          # Dùng khoảng trắng (Space) thay cho Tab
+indent_size = 2               # Mỗi lần nhấn Tab sẽ bằng 2 khoảng trắng
+end_of_line = lf              # Dùng chuẩn xuống dòng của Unix/Linux (tránh lỗi trên Git khi dùng Windows)
+charset = utf-8               # Bảng mã chuẩn quốc tế
+trim_trailing_whitespace = true # Tự động xóa khoảng trắng dư thừa ở cuối dòng
+insert_final_newline = true    # Luôn thêm một dòng trống ở cuối file (chuẩn của POSIX)
+
+# Riêng cho các file Markdown, không xóa khoảng trắng cuối dòng
+# (Vì trong Markdown, 2 khoảng trắng cuối dòng tương đương với xuống dòng <br>)
+[*.md]
+trim_trailing_whitespace = false
+
+# Cấu hình riêng cho các file script hoặc build nếu cần
+[*.{sh,py}]
+indent_size = 4
