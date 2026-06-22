@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'sonner';
 
 import AuthApi from '~/api-requests/auth.requests';
+import { handleApiError } from '~/utils/handleApiError';
 import { RoleType } from '~/constants/enums';
 import useAuth from '~/hooks/useAuth';
 import { Button } from '~/components/ui/button';
@@ -39,9 +39,7 @@ const Login = () => {
         navigate(ROLE_REDIRECT[result.role] || '/');
       }
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Đăng nhập thất bại!');
-      }
+      handleApiError(err, 'Đăng nhập thất bại!');
     } finally {
       setLoading(false);
     }

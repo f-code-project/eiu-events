@@ -2,10 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'sonner';
 
 import AdminApi from '~/api-requests/admin.requests';
+import { handleApiError } from '~/utils/handleApiError';
 import Loading from '~/components/Loading';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -43,9 +43,7 @@ const PlayerDetailPage = () => {
       setEditingScoreId(null);
       queryClient.invalidateQueries({ queryKey: ['admin-player', id] });
     },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) toast.error(err.response?.data?.message || 'Có lỗi xảy ra!');
-    },
+    onError: (err) => handleApiError(err),
   });
 
   const deleteMutation = useMutation({
@@ -54,9 +52,7 @@ const PlayerDetailPage = () => {
       toast.success('Xoá điểm thành công!');
       queryClient.invalidateQueries({ queryKey: ['admin-player', id] });
     },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) toast.error(err.response?.data?.message || 'Có lỗi xảy ra!');
-    },
+    onError: (err) => handleApiError(err),
   });
 
   if (isLoading) return <Loading />;

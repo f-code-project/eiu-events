@@ -1,10 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Award, Trophy } from 'lucide-react';
 import { useState } from 'react';
-import axios from 'axios';
 import { toast } from 'sonner';
 
 import PlayerApi from '~/api-requests/player.requests';
+import { handleApiError } from '~/utils/handleApiError';
 import Loading from '~/components/Loading';
 import StationCard from '~/components/StationCard';
 import { RewardStatus } from '~/constants/enums';
@@ -42,9 +42,7 @@ const PlayerDashboard = () => {
       queryClient.invalidateQueries({ queryKey: ['player-progress'] });
       fetchUser();
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Có lỗi xảy ra!');
-      }
+      handleApiError(err);
     } finally {
       setRequesting(false);
     }

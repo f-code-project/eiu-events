@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle, Clock } from 'lucide-react';
-import axios from 'axios';
 import { toast } from 'sonner';
 
 import RewardApi from '~/api-requests/reward.requests';
+import { handleApiError } from '~/utils/handleApiError';
 import Loading from '~/components/Loading';
 import useSocket from '~/hooks/useSocket';
 import { Button } from '~/components/ui/button';
@@ -33,11 +33,7 @@ const RewardStation = () => {
       toast.success('Trao thưởng thành công!');
       queryClient.invalidateQueries({ queryKey: ['pending-rewards'] });
     },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message || 'Có lỗi xảy ra!');
-      }
-    },
+    onError: (err) => handleApiError(err),
   });
 
   if (isLoading) return <Loading />;

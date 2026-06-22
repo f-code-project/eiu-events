@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import axios from 'axios';
 import { toast } from 'sonner';
 
 import StaffApi from '~/api-requests/staff.requests';
+import { handleApiError } from '~/utils/handleApiError';
 import StationApi from '~/api-requests/station.requests';
 import Loading from '~/components/Loading';
 import { Button } from '~/components/ui/button';
@@ -50,9 +50,7 @@ const AdminStaff = () => {
       closeDialog();
       queryClient.invalidateQueries({ queryKey: ['admin-staff'] });
     },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) toast.error(err.response?.data?.message || 'Có lỗi xảy ra!');
-    },
+    onError: (err) => handleApiError(err),
   });
 
   const deleteMutation = useMutation({
@@ -61,9 +59,7 @@ const AdminStaff = () => {
       toast.success('Xoá nhân sự thành công!');
       queryClient.invalidateQueries({ queryKey: ['admin-staff'] });
     },
-    onError: (err) => {
-      if (axios.isAxiosError(err)) toast.error(err.response?.data?.message || 'Có lỗi xảy ra!');
-    },
+    onError: (err) => handleApiError(err),
   });
 
   const openCreate = () => {
