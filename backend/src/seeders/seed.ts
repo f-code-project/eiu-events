@@ -7,7 +7,7 @@ import { users } from '~/db/schema';
 import { AlgoCrypto } from '~/utils/crypto';
 
 const ADMIN_ACCOUNT = {
-  mssv: 'admin',
+  mssv: 'SE200947',
   password: 'admin123',
   role: RoleType.ADMIN,
 };
