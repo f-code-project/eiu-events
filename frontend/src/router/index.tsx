@@ -1,25 +1,45 @@
-import { createBrowserRouter } from "react-router-dom";
-import App from "../App";
-import MasterLayout from "../layout/MasterLayout";
-import NotFound from "../pages/NotFound";
-// import Home from '@/pages/Home';
-// import About from '@/pages/About';
-// import NotFound from '@/pages/NotFound';
+import { createBrowserRouter } from 'react-router-dom';
+
+import { RoleType } from '~/constants/enums';
+import MasterLayout from '~/layout/MasterLayout';
+import ProtectedRoute from '~/layout/ProtectedRoute';
+import Login from '~/pages/Login';
+import NotFound from '~/pages/NotFound';
+import Register from '~/pages/Register';
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <MasterLayout />,
     children: [
-      {
-        path: "/",
-        element: <App />,
-      },
+      { index: true, element: <div>Trang chủ EIU</div> },
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
     ],
   },
-
   {
-    path: "*",
-    element: <NotFound />,
+    path: '/player',
+    element: <ProtectedRoute roleAccess={[RoleType.PLAYER]} />,
+    children: [{ index: true, element: <div>Player Dashboard (Phase 8)</div> }],
   },
+  {
+    path: '/staff',
+    element: <ProtectedRoute roleAccess={[RoleType.STATION_STAFF]} />,
+    children: [
+      { index: true, element: <div>Staff Score Entry (Phase 9)</div> },
+      { path: 'rewards', element: <div>Reward Station (Phase 9)</div> },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <ProtectedRoute roleAccess={[RoleType.ADMIN]} />,
+    children: [
+      { index: true, element: <div>Admin Dashboard (Phase 10)</div> },
+      { path: 'stations', element: <div>Station Management (Phase 10)</div> },
+      { path: 'staff', element: <div>Staff Management (Phase 10)</div> },
+      { path: 'players', element: <div>Player Management (Phase 10)</div> },
+      { path: 'players/:id', element: <div>Player Detail (Phase 10)</div> },
+    ],
+  },
+  { path: '*', element: <NotFound /> },
 ]);

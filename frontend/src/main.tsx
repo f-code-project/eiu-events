@@ -1,8 +1,27 @@
-import { createRoot } from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-import "./index.css";
-import { router } from "./router/index.tsx";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
 
-createRoot(document.getElementById("root")!).render(
-  <RouterProvider router={router} />,
+import { router } from '~/router/index';
+import { store } from '~/store/store';
+import './index.css';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+createRoot(document.getElementById('root')!).render(
+  <Provider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+      <Toaster position="top-right" richColors />
+    </QueryClientProvider>
+  </Provider>,
 );

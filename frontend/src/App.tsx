@@ -1,7 +1,5 @@
-import React from "react";
-
 const App = () => {
-  return <div>hello các bạn nha</div>;
+  return <div>Trang chủ EIU</div>;
 };
 
 export default App;
