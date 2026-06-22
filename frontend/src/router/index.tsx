@@ -1,10 +1,16 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import { RoleType } from '~/constants/enums';
+import AdminLayout from '~/layout/AdminLayout';
 import MasterLayout from '~/layout/MasterLayout';
 import PlayerLayout from '~/layout/PlayerLayout';
 import ProtectedRoute from '~/layout/ProtectedRoute';
 import StaffLayout from '~/layout/StaffLayout';
+import AdminDashboard from '~/pages/Admin';
+import AdminPlayers from '~/pages/Admin/Players';
+import PlayerDetailPage from '~/pages/Admin/Players/Detail';
+import AdminStaff from '~/pages/Admin/Staff';
+import AdminStations from '~/pages/Admin/Stations';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
 import PlayerDashboard from '~/pages/Player';
@@ -49,11 +55,16 @@ export const router = createBrowserRouter([
     path: '/admin',
     element: <ProtectedRoute roleAccess={[RoleType.ADMIN]} />,
     children: [
-      { index: true, element: <div>Admin Dashboard (Phase 10)</div> },
-      { path: 'stations', element: <div>Station Management (Phase 10)</div> },
-      { path: 'staff', element: <div>Staff Management (Phase 10)</div> },
-      { path: 'players', element: <div>Player Management (Phase 10)</div> },
-      { path: 'players/:id', element: <div>Player Detail (Phase 10)</div> },
+      {
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminDashboard /> },
+          { path: 'stations', element: <AdminStations /> },
+          { path: 'staff', element: <AdminStaff /> },
+          { path: 'players', element: <AdminPlayers /> },
+          { path: 'players/:id', element: <PlayerDetailPage /> },
+        ],
+      },
     ],
   },
   { path: '*', element: <NotFound /> },
