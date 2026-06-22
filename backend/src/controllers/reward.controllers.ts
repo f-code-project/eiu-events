@@ -16,7 +16,7 @@ class RewardController {
 
   complete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await rewardService.complete(req.params.id, req.userId!);
+      const result = await rewardService.complete(req.params.id as string, req.userId!);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Trao thưởng thành công!', result }));
     } catch (err) {
       next(err);

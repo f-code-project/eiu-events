@@ -25,7 +25,7 @@ class ScoreController {
 
   getByStation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await scoreService.getByStation(req.userId!, req.params.stationId);
+      const result = await scoreService.getByStation(req.userId!, req.params.stationId as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
     } catch (err) {
       next(err);

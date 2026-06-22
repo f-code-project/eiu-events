@@ -16,7 +16,7 @@ class StaffController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await staffService.getById(req.params.id);
+      const result = await staffService.getById(req.params.id as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
     } catch (err) {
       next(err);
@@ -34,7 +34,7 @@ class StaffController {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await staffService.update(req.params.id, req.body);
+      const result = await staffService.update(req.params.id as string, req.body);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Cập nhật nhân sự thành công!', result }));
     } catch (err) {
       next(err);
@@ -43,7 +43,7 @@ class StaffController {
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await staffService.delete(req.params.id);
+      await staffService.delete(req.params.id as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Xoá nhân sự thành công!' }));
     } catch (err) {
       next(err);

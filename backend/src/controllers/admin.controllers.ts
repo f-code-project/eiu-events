@@ -25,7 +25,7 @@ class AdminController {
 
   getPlayerById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await adminService.getPlayerById(req.params.id);
+      const result = await adminService.getPlayerById(req.params.id as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
     } catch (err) {
       next(err);
@@ -34,7 +34,7 @@ class AdminController {
 
   updateScore = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await adminService.updateScore(req.params.id, req.body.score);
+      await adminService.updateScore(req.params.id as string, req.body.score);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Cập nhật điểm thành công!' }));
     } catch (err) {
       next(err);
@@ -43,7 +43,7 @@ class AdminController {
 
   deleteScore = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await adminService.deleteScore(req.params.id);
+      await adminService.deleteScore(req.params.id as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Xoá điểm thành công!' }));
     } catch (err) {
       next(err);

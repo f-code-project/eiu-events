@@ -16,7 +16,7 @@ class StationController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await stationService.getById(req.params.id);
+      const result = await stationService.getById(req.params.id as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
     } catch (err) {
       next(err);
@@ -34,7 +34,7 @@ class StationController {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await stationService.update(req.params.id, req.body);
+      await stationService.update(req.params.id as string, req.body);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Cập nhật trạm thành công!' }));
     } catch (err) {
       next(err);
@@ -43,7 +43,7 @@ class StationController {
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await stationService.delete(req.params.id);
+      await stationService.delete(req.params.id as string);
       res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Xoá trạm thành công!' }));
     } catch (err) {
       next(err);
