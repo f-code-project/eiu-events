@@ -2,9 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 
 import { RoleType } from '~/constants/enums';
 import MasterLayout from '~/layout/MasterLayout';
+import PlayerLayout from '~/layout/PlayerLayout';
 import ProtectedRoute from '~/layout/ProtectedRoute';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
+import PlayerDashboard from '~/pages/Player';
 import Register from '~/pages/Register';
 
 export const router = createBrowserRouter([
@@ -20,7 +22,12 @@ export const router = createBrowserRouter([
   {
     path: '/player',
     element: <ProtectedRoute roleAccess={[RoleType.PLAYER]} />,
-    children: [{ index: true, element: <div>Player Dashboard (Phase 8)</div> }],
+    children: [
+      {
+        element: <PlayerLayout />,
+        children: [{ index: true, element: <PlayerDashboard /> }],
+      },
+    ],
   },
   {
     path: '/staff',
