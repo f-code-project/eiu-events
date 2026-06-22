@@ -15,6 +15,15 @@ export const initSocket = (server: HttpServer) => {
 
   io.on('connection', (socket) => {
     console.log(`✓ Socket connected: ${socket.id}`);
+
+    socket.on('join:reward-station', () => {
+      socket.join('reward-station');
+    });
+
+    socket.on('join:player', (playerId: string) => {
+      socket.join(`player:${playerId}`);
+    });
+
     socket.on('disconnect', () => {
       console.log(`✗ Socket disconnected: ${socket.id}`);
     });
