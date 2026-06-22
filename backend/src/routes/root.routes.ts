@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import adminRouter from '~/routes/admin.routes';
 import authRouter from '~/routes/auth.routes';
 import playerRouter from '~/routes/player.routes';
 import rewardRouter from '~/routes/reward.routes';
@@ -15,5 +16,6 @@ rootRouter.use('/staff', staffRouter);
 rootRouter.use('/scores', scoreRouter);
 rootRouter.use('/players', playerRouter);
 rootRouter.use('/rewards', rewardRouter);
+rootRouter.use('/admin', adminRouter);
 
 export default rootRouter;
