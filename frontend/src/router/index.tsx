@@ -4,10 +4,13 @@ import { RoleType } from '~/constants/enums';
 import MasterLayout from '~/layout/MasterLayout';
 import PlayerLayout from '~/layout/PlayerLayout';
 import ProtectedRoute from '~/layout/ProtectedRoute';
+import StaffLayout from '~/layout/StaffLayout';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
 import PlayerDashboard from '~/pages/Player';
 import Register from '~/pages/Register';
+import StaffScoreEntry from '~/pages/Staff';
+import RewardStation from '~/pages/Staff/Rewards';
 
 export const router = createBrowserRouter([
   {
@@ -33,8 +36,13 @@ export const router = createBrowserRouter([
     path: '/staff',
     element: <ProtectedRoute roleAccess={[RoleType.STATION_STAFF]} />,
     children: [
-      { index: true, element: <div>Staff Score Entry (Phase 9)</div> },
-      { path: 'rewards', element: <div>Reward Station (Phase 9)</div> },
+      {
+        element: <StaffLayout />,
+        children: [
+          { index: true, element: <StaffScoreEntry /> },
+          { path: 'rewards', element: <RewardStation /> },
+        ],
+      },
     ],
   },
   {

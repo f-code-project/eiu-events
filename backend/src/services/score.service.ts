@@ -5,6 +5,22 @@ import userRepository from '~/repositories/user.repository';
 import { ErrorWithStatus } from '~/rules/error';
 
 class ScoreService {
+  getMyStations = async (staffId: string) => {
+    const { db } = await import('~/configs/db');
+    const { stationStaff, stations } = await import('~/db/schema');
+    const { eq } = await import('drizzle-orm');
+
+    return await db
+      .select({
+        stationId: stationStaff.stationId,
+        stationName: stations.name,
+        isReward: stations.isReward,
+      })
+      .from(stationStaff)
+      .innerJoin(stations, eq(stationStaff.stationId, stations.id))
+      .where(eq(stationStaff.userId, staffId));
+  };
+
   create = async (staffId: string, data: { mssv: string; stationId: string; score: number }) => {
     const isAssigned = await scoreRepository.isStaffAssignedToStation(staffId, data.stationId);
     if (!isAssigned) {

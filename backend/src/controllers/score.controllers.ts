@@ -5,6 +5,15 @@ import { ResponseClient } from '~/rules/response';
 import scoreService from '~/services/score.service';
 
 class ScoreController {
+  getMyStations = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await scoreService.getMyStations(req.userId!);
+      res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
+    } catch (err) {
+      next(err);
+    }
+  };
+
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await scoreService.create(req.userId!, req.body);

@@ -23,4 +23,11 @@ scoreRouter.get(
   scoreController.getByStation,
 );
 
+scoreRouter.get(
+  '/my-stations',
+  middlewareAuth.auth,
+  isRole([RoleType.STATION_STAFF]),
+  scoreController.getMyStations,
+);
+
 export default scoreRouter;
