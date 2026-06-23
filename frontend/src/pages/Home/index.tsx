@@ -1,89 +1,119 @@
 import { useQuery } from '@tanstack/react-query';
-import { Code2, Database, Gamepad2, MapPin, Sparkles, Users } from 'lucide-react';
+import { Brain, Code2, Database, Gamepad2, MapPin, Trophy, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import StationApi from '~/api-requests/station.requests';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
 import useAuth from '~/hooks/useAuth';
 
 import type { PublicStationType } from '~/types/station';
 
-const STATION_ICONS: Record<number, React.ReactNode> = {
-  1: <Code2 className="h-6 w-6" />,
-  2: <Database className="h-6 w-6" />,
-  3: <Sparkles className="h-6 w-6" />,
-  4: <Gamepad2 className="h-6 w-6" />,
-};
-
-const STATION_COLORS: Record<number, { bg: string; border: string; text: string; dot: string; line: string }> = {
+const STATION_THEMES: Record<number, { icon: React.ReactNode; gradient: string; iconBg: string; accent: string }> = {
   1: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-600',
-    dot: 'bg-blue-500',
-    line: 'from-blue-500',
+    icon: <Code2 className="h-5 w-5" />,
+    gradient: 'from-blue-500 to-cyan-400',
+    iconBg: 'bg-blue-500',
+    accent: 'text-blue-600',
   },
   2: {
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-200',
-    text: 'text-emerald-600',
-    dot: 'bg-emerald-500',
-    line: 'from-emerald-500',
+    icon: <Database className="h-5 w-5" />,
+    gradient: 'from-emerald-500 to-teal-400',
+    iconBg: 'bg-emerald-500',
+    accent: 'text-emerald-600',
   },
   3: {
-    bg: 'bg-violet-50',
-    border: 'border-violet-200',
-    text: 'text-violet-600',
-    dot: 'bg-violet-500',
-    line: 'from-violet-500',
+    icon: <Brain className="h-5 w-5" />,
+    gradient: 'from-violet-500 to-purple-400',
+    iconBg: 'bg-violet-500',
+    accent: 'text-violet-600',
   },
   4: {
-    bg: 'bg-orange-50',
-    border: 'border-orange-200',
-    text: 'text-orange-600',
-    dot: 'bg-orange-500',
-    line: 'from-orange-500',
+    icon: <Gamepad2 className="h-5 w-5" />,
+    gradient: 'from-orange-500 to-amber-400',
+    iconBg: 'bg-orange-500',
+    accent: 'text-orange-600',
   },
 };
 
-const StationTimeline = ({ station }: { station: PublicStationType }) => {
-  const colors = STATION_COLORS[station.order] ?? STATION_COLORS[1];
-  const icon = STATION_ICONS[station.order] ?? <MapPin className="h-6 w-6" />;
+const StationNode = ({ station, side }: { station: PublicStationType; side: 'left' | 'right' }) => {
+  const theme = STATION_THEMES[station.order] ?? {
+    icon: <MapPin className="h-5 w-5" />,
+    gradient: 'from-gray-500 to-gray-400',
+    iconBg: 'bg-gray-500',
+    accent: 'text-gray-600',
+  };
 
-  return (
-    <div className="group relative flex gap-6 pb-12 last:pb-0">
-      <div className="flex flex-col items-center">
-        <div
-          className={`relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${colors.bg} ${colors.border} ${colors.text} border-2 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md`}
-        >
-          {icon}
-        </div>
-        <div className={`mt-2 h-full w-0.5 bg-gradient-to-b ${colors.line} to-transparent last:hidden`} />
-      </div>
-
-      <div
-        className={`flex-1 rounded-xl border ${colors.border} bg-white px-5 py-4 shadow-xs transition-all duration-300 group-hover:shadow-md sm:px-6 sm:py-5`}
-      >
-        <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <span className={`text-xs font-bold tracking-wider uppercase ${colors.text}`}>Trạm {station.order}</span>
-            <h3 className="mt-1 text-lg font-bold text-gray-900 sm:text-xl">{station.name}</h3>
+  const cardContent = (
+    <Card className="group relative overflow-hidden border-gray-200/80 py-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.gradient}`} />
+      <CardContent className="px-5 pt-5 pb-4">
+        <div className="mb-3 flex items-center gap-3">
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${theme.iconBg} text-white shadow-sm`}
+          >
+            {theme.icon}
           </div>
-          <div className="flex gap-3">
-            <div className="text-center">
-              <span className="text-primary block text-xl font-bold">{station.avgScore}</span>
-              <span className="text-xs text-gray-500">Điểm TB</span>
-            </div>
-            <div className="text-center">
-              <span className="block text-xl font-bold text-gray-900">{station.playerCount}</span>
-              <span className="text-xs text-gray-500">Đã chơi</span>
-            </div>
+          <div className="min-w-0">
+            <Badge variant="outline" className="mb-1 text-[10px]">
+              Trạm {station.order}
+            </Badge>
+            <h3 className="truncate text-base font-bold text-gray-900">{station.name}</h3>
           </div>
         </div>
 
         {station.description && (
-          <p className="text-sm leading-relaxed text-gray-600 sm:text-[15px]">{station.description}</p>
+          <p className="mb-4 line-clamp-3 text-[13px] leading-relaxed text-gray-500">{station.description}</p>
         )}
+
+        <div className="flex items-center gap-4 border-t border-gray-100 pt-3">
+          <div className="flex items-center gap-1.5">
+            <Trophy className={`h-3.5 w-3.5 ${theme.accent}`} />
+            <span className="text-sm font-semibold text-gray-900">{station.avgScore}</span>
+            <span className="text-xs text-gray-400">điểm TB</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Users className={`h-3.5 w-3.5 ${theme.accent}`} />
+            <span className="text-sm font-semibold text-gray-900">{station.playerCount}</span>
+            <span className="text-xs text-gray-400">đã chơi</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="relative flex items-center">
+      {/* Desktop: alternating left/right */}
+      <div className="hidden w-full grid-cols-[1fr_auto_1fr] items-center gap-0 md:grid">
+        <div className={side === 'left' ? 'pr-8' : ''}>
+          {side === 'left' && cardContent}
+        </div>
+
+        <div className="relative flex flex-col items-center">
+          <div
+            className={`z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br ${theme.gradient} text-white shadow-md ring-4 ring-white`}
+          >
+            {theme.icon}
+          </div>
+        </div>
+
+        <div className={side === 'right' ? 'pl-8' : ''}>
+          {side === 'right' && cardContent}
+        </div>
+      </div>
+
+      {/* Mobile: always right of the line */}
+      <div className="grid w-full grid-cols-[auto_1fr] items-center gap-0 md:hidden">
+        <div className="relative flex flex-col items-center">
+          <div
+            className={`z-10 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${theme.gradient} text-white shadow-md ring-4 ring-white`}
+          >
+            {theme.icon}
+          </div>
+        </div>
+        <div className="pl-5">{cardContent}</div>
       </div>
     </div>
   );
@@ -100,11 +130,11 @@ const HomePage = () => {
   const stations = (data?.result ?? []).filter((s) => !s.isReward);
 
   return (
-    <div className="container mx-auto py-6">
-      <section className="mb-10 text-center sm:mb-14">
+    <div className="py-6">
+      <section className="mb-12 text-center sm:mb-16">
         <div className="relative mx-auto mb-5 flex h-20 w-20 items-center justify-center sm:h-24 sm:w-24">
           <img src="/fcode.png" alt="F-Code" className="relative z-10 h-full w-full" />
-          <div className="bg-primary/20 absolute inset-0 rounded-full blur-xl"></div>
+          <div className="bg-primary/25 absolute inset-0 scale-150 rounded-full blur-2xl"></div>
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
           Exploring IT Universe
@@ -132,22 +162,36 @@ const HomePage = () => {
 
       {stations.length > 0 && (
         <section>
-          <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Các trạm đang hoạt động</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              {stations.length} trạm thử thách đang chờ bạn chinh phục
-            </p>
+          <div className="mb-10 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Hành trình khám phá</h2>
+            <p className="mt-2 text-sm text-gray-500">{stations.length} trạm thử thách đang chờ bạn chinh phục</p>
           </div>
 
-          <div className="mx-auto max-w-3xl">
-            {stations.map((station) => (
-              <StationTimeline key={station.id} station={station} />
-            ))}
+          {/* Timeline tree */}
+          <div className="relative mx-auto max-w-4xl">
+            {/* Vertical trunk line — desktop center, mobile left */}
+            <div className="absolute top-0 bottom-0 left-5 w-0.5 bg-gradient-to-b from-blue-300 via-emerald-300 via-violet-300 to-orange-300 md:left-1/2 md:-translate-x-1/2" />
+
+            <div className="flex flex-col gap-10 md:gap-14">
+              {stations.map((station, index) => (
+                <StationNode key={station.id} station={station} side={index % 2 === 0 ? 'left' : 'right'} />
+              ))}
+            </div>
+
+            {/* End dot */}
+            <div className="relative mt-10 flex justify-start md:justify-center">
+              <div className="bg-primary z-10 ml-[13px] flex h-5 w-5 items-center justify-center rounded-full shadow-md ring-4 ring-white md:ml-0">
+                <div className="h-2 w-2 rounded-full bg-white" />
+              </div>
+            </div>
           </div>
 
           {!isAuthenticated && (
-            <div className="mt-10 rounded-xl border border-dashed border-gray-300 bg-gray-50/50 px-6 py-8 text-center sm:mt-14">
-              <h3 className="text-lg font-bold text-gray-900 sm:text-xl">Sẵn sàng thử thách?</h3>
+            <div className="mt-14 rounded-xl border border-dashed border-gray-300 bg-gray-50/50 px-6 py-10 text-center">
+              <div className="bg-primary/10 mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+                <Users className="text-primary h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Sẵn sàng thử thách?</h3>
               <p className="mx-auto mt-2 max-w-md text-sm text-gray-600">
                 Đăng ký tài khoản ngay để tham gia chương trình, chinh phục các trạm và nhận thưởng!
               </p>
