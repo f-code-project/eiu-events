@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import StaffApi from '~/api-requests/staff.requests';
-import { handleApiError } from '~/utils/handleApiError';
 import StationApi from '~/api-requests/station.requests';
 import Loading from '~/components/Loading';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { handleApiError } from '~/utils/handleApiError';
 
 import type { StaffType } from '~/types/staff';
 
@@ -83,7 +82,9 @@ const AdminStaff = () => {
   const toggleStation = (stationId: string) => {
     setForm((f) => ({
       ...f,
-      stationIds: f.stationIds.includes(stationId) ? f.stationIds.filter((id) => id !== stationId) : [...f.stationIds, stationId],
+      stationIds: f.stationIds.includes(stationId)
+        ? f.stationIds.filter((id) => id !== stationId)
+        : [...f.stationIds, stationId],
     }));
   };
 
@@ -93,40 +94,61 @@ const AdminStaff = () => {
   const stationList = stationsData?.result ?? [];
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Quản lý nhân sự</h2>
+    <div className="container mx-auto py-6">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Quản lý Nhân sự</h1>
+          <p className="mt-2 text-sm text-gray-600">Quản lý nhân sự và phân công trạm phụ trách</p>
+        </div>
         <Button onClick={openCreate} className="gap-1.5">
           <Plus size={16} />
           Tạo nhân sự
         </Button>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left">
-                  <th className="p-3 font-medium">MSSV</th>
-                  <th className="p-3 font-medium">Trạm phụ trách</th>
-                  <th className="p-3 font-medium">Thao tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {staffList.map((staff) => (
-                  <tr key={staff.id} className="border-b last:border-0">
-                    <td className="p-3 font-mono font-medium">{staff.mssv}</td>
-                    <td className="p-3">
-                      <div className="flex flex-wrap gap-1">
-                        {staff.stations.map((s) => (
-                          <span key={s.stationId} className="rounded bg-gray-100 px-2 py-0.5 text-xs">
-                            {s.stationName}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="flex gap-1 p-3">
+      <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs">
+        <div className="border-b border-gray-200/70 bg-linear-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
+          <h3 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">Danh sách nhân sự</h3>
+          <p className="mt-1.5 text-xs leading-relaxed text-gray-500 sm:text-sm">
+            {staffList.length} nhân sự đang hoạt động
+          </p>
+        </div>
+        <div className="overflow-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50/50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                  STT
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                  MSSV
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                  Trạm phụ trách
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                  Thao tác
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200/60 bg-white">
+              {staffList.map((staff, index) => (
+                <tr key={staff.id} className="transition-colors hover:bg-gray-50/50">
+                  <td className="px-4 py-3.5 text-sm font-medium text-gray-400 sm:px-6 sm:py-4">{index + 1}</td>
+                  <td className="px-4 py-3.5 text-sm font-mono font-medium whitespace-nowrap text-gray-700 sm:px-6 sm:py-4">
+                    {staff.mssv}
+                  </td>
+                  <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
+                    <div className="flex flex-wrap gap-1">
+                      {staff.stations.map((s) => (
+                        <span key={s.stationId} className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+                          {s.stationName}
+                        </span>
+                      ))}
+                    </div>
+                  </td>
+                  <td className="px-4 py-3.5 sm:px-6 sm:py-4">
+                    <div className="flex gap-1">
                       <Button variant="ghost" size="sm" onClick={() => openEdit(staff)}>
                         <Pencil size={14} />
                       </Button>
@@ -140,14 +162,14 @@ const AdminStaff = () => {
                       >
                         <Trash2 size={14} />
                       </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
@@ -163,7 +185,11 @@ const AdminStaff = () => {
           >
             <div className="flex flex-col gap-2">
               <Label>MSSV</Label>
-              <Input value={form.mssv} onChange={(e) => setForm((f) => ({ ...f, mssv: e.target.value }))} required={!editingId} />
+              <Input
+                value={form.mssv}
+                onChange={(e) => setForm((f) => ({ ...f, mssv: e.target.value }))}
+                required={!editingId}
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Label>{editingId ? 'Mật khẩu mới (bỏ trống nếu không đổi)' : 'Mật khẩu'}</Label>

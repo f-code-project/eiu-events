@@ -1,25 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { Award, CheckCircle, MapPin, Users } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import AdminApi from '~/api-requests/admin.requests';
 import Loading from '~/components/Loading';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-
-const StatCard = ({ title, value, icon: Icon, color }: { title: string; value: number; icon: any; color: string }) => (
-  <Card>
-    <CardContent className="flex items-center gap-4 p-5">
-      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${color}`}>
-        <Icon size={22} className="text-white" />
-      </div>
-      <div>
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <p className="text-2xl font-bold">{value}</p>
-      </div>
-    </CardContent>
-  </Card>
-);
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+
   const { data, isLoading } = useQuery({
     queryKey: ['admin-dashboard'],
     queryFn: AdminApi.getDashboard,
@@ -31,38 +19,86 @@ const AdminDashboard = () => {
   if (!stats) return null;
 
   return (
-    <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-bold">Dashboard</h2>
+    <>
+      <section className="mt-4 mb-6">
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Trang Quản Trị</h1>
+        <p className="mb-6 text-sm text-gray-600">Tổng quan hệ thống và quản lý dữ liệu</p>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Người chơi" value={stats.totalPlayers} icon={Users} color="bg-blue-500" />
-        <StatCard title="Số trạm" value={stats.totalStations} icon={MapPin} color="bg-purple-500" />
-        <StatCard title="Hoàn thành tất cả" value={stats.completedAllStations} icon={CheckCircle} color="bg-green-500" />
-        <StatCard title="Đã đổi thưởng" value={stats.rewardStats.completed} icon={Award} color="bg-amber-500" />
-      </div>
+        <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4 [&>div]:bg-white">
+          <div onClick={() => navigate('/admin/players')} className="cursor-pointer rounded-xl px-4 py-3 shadow-xs">
+            <h4 className="text-xs text-gray-500">Người chơi</h4>
+            <span className="mt-2 inline-block text-4xl font-bold text-gray-900">{stats.totalPlayers}</span>
+            <div className="text-primary mt-2 flex items-center gap-1 text-xs font-medium">
+              Xem chi tiết
+              <ArrowRight className="h-3 w-3 transition-transform" />
+            </div>
+          </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Thống kê theo trạm</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left">
-                  <th className="pb-2 font-medium">Trạm</th>
-                  <th className="pb-2 font-medium">Đã chơi</th>
-                  <th className="pb-2 font-medium">Điểm TB</th>
-                  <th className="pb-2 font-medium">Loại</th>
+          <div onClick={() => navigate('/admin/stations')} className="cursor-pointer rounded-xl px-4 py-3 shadow-xs">
+            <h4 className="text-xs text-gray-500">Trạm chơi</h4>
+            <span className="mt-2 inline-block text-4xl font-bold text-gray-900">{stats.totalStations}</span>
+            <div className="mt-2 flex items-center gap-1 text-xs font-medium text-teal-600">
+              Xem chi tiết
+              <ArrowRight className="h-3 w-3 transition-transform" />
+            </div>
+          </div>
+
+          <div onClick={() => navigate('/admin/staff')} className="cursor-pointer rounded-xl px-4 py-3 shadow-xs">
+            <h4 className="text-xs text-gray-500">Hoàn thành tất cả</h4>
+            <span className="mt-2 inline-block text-4xl font-bold text-gray-900">{stats.completedAllStations}</span>
+            <div className="mt-2 flex items-center gap-1 text-xs font-medium text-teal-600">
+              Xem
+              <ArrowRight className="h-3 w-3 transition-transform" />
+            </div>
+          </div>
+
+          <div className="rounded-xl px-4 py-3 shadow-xs">
+            <h4 className="text-xs text-gray-500">Đã đổi thưởng</h4>
+            <span className="mt-2 inline-block text-4xl font-bold text-gray-900">{stats.rewardStats.completed}</span>
+            {stats.rewardStats.pending > 0 && (
+              <div className="mt-2 flex items-center gap-1 text-xs font-medium text-amber-600">
+                ⏳ {stats.rewardStats.pending} đang chờ
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs">
+          <div className="border-b border-gray-200/70 bg-linear-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
+            <h3 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">Thống kê theo trạm</h3>
+            <p className="mt-1.5 text-xs leading-relaxed text-gray-500 sm:text-sm">
+              Số lượng người chơi và điểm trung bình tại mỗi trạm
+            </p>
+          </div>
+          <div className="overflow-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Trạm
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Đã chơi
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Điểm TB
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Loại
+                  </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200/60 bg-white">
                 {stats.stationStats.map((s) => (
-                  <tr key={s.stationId} className="border-b last:border-0">
-                    <td className="py-2 font-medium">{s.stationName}</td>
-                    <td className="py-2">{s.completedCount}</td>
-                    <td className="py-2">{s.avgScore}</td>
-                    <td className="py-2">
+                  <tr key={s.stationId} className="transition-colors hover:bg-gray-50/50">
+                    <td className="px-4 py-3.5 text-sm font-medium whitespace-nowrap text-gray-700 sm:px-6 sm:py-4">
+                      {s.stationName}
+                    </td>
+                    <td className="px-4 py-3.5 text-sm text-gray-700 sm:px-6 sm:py-4">{s.completedCount}</td>
+                    <td className="px-4 py-3.5 text-sm text-gray-700 sm:px-6 sm:py-4">{s.avgScore}</td>
+                    <td className="px-4 py-3.5 text-sm sm:px-6 sm:py-4">
                       {s.isReward ? (
                         <span className="rounded bg-amber-100 px-2 py-0.5 text-xs text-amber-700">Đổi thưởng</span>
                       ) : (
@@ -74,19 +110,9 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
-
-      {stats.rewardStats.pending > 0 && (
-        <Card className="border-amber-300 bg-amber-50">
-          <CardContent className="p-4">
-            <p className="font-medium text-amber-700">
-              ⏳ {stats.rewardStats.pending} yêu cầu đổi thưởng đang chờ xử lý
-            </p>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+        </div>
+      </section>
+    </>
   );
 };
 

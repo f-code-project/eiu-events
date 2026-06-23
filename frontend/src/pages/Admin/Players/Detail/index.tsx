@@ -5,13 +5,12 @@ import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 import AdminApi from '~/api-requests/admin.requests';
-import { handleApiError } from '~/utils/handleApiError';
 import Loading from '~/components/Loading';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { handleApiError } from '~/utils/handleApiError';
 
 const rewardLabel = (status: string) => {
   switch (status) {
@@ -61,64 +60,80 @@ const PlayerDetailPage = () => {
   if (!player) return <p>Không tìm thấy người chơi.</p>;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
+    <div className="container mx-auto py-6">
+      <div className="mb-6 flex items-center gap-3">
         <Link to="/admin/players">
           <Button variant="ghost" size="sm">
             <ArrowLeft size={16} />
           </Button>
         </Link>
-        <h2 className="text-xl font-bold">Người chơi: {player.mssv}</h2>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Người chơi: {player.mssv}</h1>
+          <p className="mt-1 text-sm text-gray-600">Chi tiết điểm và trạng thái thưởng</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Tổng điểm</p>
-            <p className="text-2xl font-bold text-primary">{player.totalScore}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Số trạm</p>
-            <p className="text-2xl font-bold">{player.scores.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Thưởng</p>
-            <p className="text-lg font-medium">{rewardLabel(player.rewardStatus)}</p>
-          </CardContent>
-        </Card>
+      <div className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-3 [&>div]:bg-white">
+        <div className="rounded-xl px-4 py-3 shadow-xs">
+          <h4 className="text-xs text-gray-500">Tổng điểm</h4>
+          <span className="text-primary mt-2 inline-block text-4xl font-bold">{player.totalScore}</span>
+        </div>
+        <div className="rounded-xl px-4 py-3 shadow-xs">
+          <h4 className="text-xs text-gray-500">Số trạm</h4>
+          <span className="mt-2 inline-block text-4xl font-bold text-gray-900">{player.scores.length}</span>
+        </div>
+        <div className="rounded-xl px-4 py-3 shadow-xs">
+          <h4 className="text-xs text-gray-500">Thưởng</h4>
+          <span className="mt-2 inline-block text-lg font-medium text-gray-900">
+            {rewardLabel(player.rewardStatus)}
+          </span>
+        </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Điểm từng trạm</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {player.scores.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Chưa có điểm nào.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-left">
-                    <th className="pb-2 font-medium">Trạm</th>
-                    <th className="pb-2 font-medium">Điểm</th>
-                    <th className="pb-2 font-medium">Nhân sự chấm</th>
-                    <th className="pb-2 font-medium">Thời gian</th>
-                    <th className="pb-2 font-medium">Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {player.scores.map((s) => (
-                    <tr key={s.id} className="border-b last:border-0">
-                      <td className="py-2">{s.stationName}</td>
-                      <td className="py-2 font-bold">{s.score}</td>
-                      <td className="py-2 font-mono text-muted-foreground">{s.staffMssv}</td>
-                      <td className="py-2 text-muted-foreground">{new Date(s.createdAt).toLocaleString('vi-VN')}</td>
-                      <td className="flex gap-1 py-2">
+      <div className="overflow-hidden rounded-lg border border-gray-200/70 bg-white shadow-xs">
+        <div className="border-b border-gray-200/70 bg-linear-to-r from-gray-50/80 to-white px-5 py-4 sm:px-6 sm:py-5">
+          <h3 className="text-base font-semibold tracking-tight text-gray-900 sm:text-lg">Điểm từng trạm</h3>
+          <p className="mt-1.5 text-xs leading-relaxed text-gray-500 sm:text-sm">
+            Danh sách điểm tại các trạm đã hoàn thành
+          </p>
+        </div>
+        {player.scores.length === 0 ? (
+          <div className="px-6 py-8 text-center text-sm text-gray-500">Chưa có điểm nào.</div>
+        ) : (
+          <div className="overflow-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Trạm
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Điểm
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Nhân sự chấm
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Thời gian
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase sm:px-6 sm:py-3.5">
+                    Thao tác
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200/60 bg-white">
+                {player.scores.map((s) => (
+                  <tr key={s.id} className="transition-colors hover:bg-gray-50/50">
+                    <td className="px-4 py-3.5 text-sm font-medium whitespace-nowrap text-gray-700 sm:px-6 sm:py-4">
+                      {s.stationName}
+                    </td>
+                    <td className="px-4 py-3.5 text-sm font-bold text-gray-900 sm:px-6 sm:py-4">{s.score}</td>
+                    <td className="px-4 py-3.5 text-sm font-mono text-gray-500 sm:px-6 sm:py-4">{s.staffMssv}</td>
+                    <td className="px-4 py-3.5 text-sm text-gray-500 sm:px-6 sm:py-4">
+                      {new Date(s.createdAt).toLocaleString('vi-VN')}
+                    </td>
+                    <td className="px-4 py-3.5 sm:px-6 sm:py-4">
+                      <div className="flex gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
@@ -139,15 +154,15 @@ const PlayerDetailPage = () => {
                         >
                           <Trash2 size={14} />
                         </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       <Dialog open={!!editingScoreId} onOpenChange={(open) => !open && setEditingScoreId(null)}>
         <DialogContent>
@@ -163,7 +178,14 @@ const PlayerDetailPage = () => {
           >
             <div className="flex flex-col gap-2">
               <Label>Điểm (1-3)</Label>
-              <Input type="number" min={1} max={3} value={editScore} onChange={(e) => setEditScore(e.target.value)} required />
+              <Input
+                type="number"
+                min={1}
+                max={3}
+                value={editScore}
+                onChange={(e) => setEditScore(e.target.value)}
+                required
+              />
             </div>
             <Button type="submit" disabled={updateMutation.isPending}>
               {updateMutation.isPending ? 'Đang lưu...' : 'Lưu'}
