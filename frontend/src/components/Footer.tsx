@@ -1,5 +1,5 @@
-import {  Globe } from 'lucide-react';
-import { Link } from 'react-router';
+import { Globe } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -94,15 +94,20 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="text-primary hover:bg-primary group hover:border-primary flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-xs transition-all hover:scale-110 hover:text-white"
               >
-                {/* <Facebook className="h-4 w-4" /> */}
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                </svg>
               </a>
               <a
                 href="https://www.youtube.com/channel/UCZyrUXSrQ1AdkomxYz1GvCw"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:bg-primary group hover:border-primary flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white shadow-xs transition-all hover:scale-110 hover:text-white"
-                >
-                  {/* <Youtube className="h-4 w-4" /> */}
+              >
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.43z" />
+                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="white" />
+                </svg>
               </a>
               <a
                 href="https://fcodehcm.wordpress.com/"
