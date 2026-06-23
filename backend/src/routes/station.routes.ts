@@ -8,6 +8,7 @@ import { createStationSchema, updateStationSchema } from '~/schemas/station.sche
 
 const stationRouter = Router();
 
+stationRouter.get('/public', stationController.getPublic);
 stationRouter.get('/', middlewareAuth.auth, isRole([RoleType.ADMIN]), stationController.getAll);
 stationRouter.get('/:id', middlewareAuth.auth, isRole([RoleType.ADMIN]), stationController.getById);
 stationRouter.post('/', middlewareAuth.auth, isRole([RoleType.ADMIN]), validate(createStationSchema), stationController.create);

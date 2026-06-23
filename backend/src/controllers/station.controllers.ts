@@ -5,6 +5,15 @@ import { ResponseClient } from '~/rules/response';
 import stationService from '~/services/station.service';
 
 class StationController {
+  getPublic = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await stationService.getPublicStats();
+      res.status(HTTP_STATUS.OK).json(new ResponseClient({ message: 'Thành công!', result }));
+    } catch (err) {
+      next(err);
+    }
+  };
+
   getAll = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await stationService.getAll();

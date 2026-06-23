@@ -11,6 +11,10 @@ class StationService {
     return await stationRepository.findAll();
   };
 
+  getPublicStats = async () => {
+    return await stationRepository.findAllWithStats();
+  };
+
   getById = async (id: string) => {
     const station = await stationRepository.findById(id);
     if (!station) {
