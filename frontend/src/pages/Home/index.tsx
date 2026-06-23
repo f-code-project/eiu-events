@@ -1,139 +1,166 @@
 import { useQuery } from '@tanstack/react-query';
-import { Brain, ChevronRight, Code2, Database, Gamepad2, MapPin, Sparkles, Trophy, Users, Zap } from 'lucide-react';
+import { Code2, Database, Gamepad2, MapPin, Sparkles, Star, TrendingUp, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import StationApi from '~/api-requests/station.requests';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
 import useAuth from '~/hooks/useAuth';
 
 import type { PublicStationType } from '~/types/station';
 
-const STATION_THEMES: Record<number, { icon: React.ReactNode; gradient: string; glow: string; badge: string }> = {
+const STATION_THEME: Record<number, { icon: React.ReactNode; gradient: string; iconBg: string; accent: string }> = {
   1: {
     icon: <Code2 className="h-5 w-5" />,
-    gradient: 'from-blue-500 to-cyan-400',
-    glow: 'shadow-blue-500/25',
-    badge: 'bg-blue-50 text-blue-700 border-blue-200',
+    gradient: 'from-blue-500 to-cyan-500',
+    iconBg: 'bg-blue-500',
+    accent: 'text-blue-600',
   },
   2: {
     icon: <Database className="h-5 w-5" />,
-    gradient: 'from-emerald-500 to-teal-400',
-    glow: 'shadow-emerald-500/25',
-    badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    gradient: 'from-emerald-500 to-teal-500',
+    iconBg: 'bg-emerald-500',
+    accent: 'text-emerald-600',
   },
   3: {
-    icon: <Brain className="h-5 w-5" />,
-    gradient: 'from-violet-500 to-purple-400',
-    glow: 'shadow-violet-500/25',
-    badge: 'bg-violet-50 text-violet-700 border-violet-200',
+    icon: <Sparkles className="h-5 w-5" />,
+    gradient: 'from-violet-500 to-purple-500',
+    iconBg: 'bg-violet-500',
+    accent: 'text-violet-600',
   },
   4: {
     icon: <Gamepad2 className="h-5 w-5" />,
-    gradient: 'from-orange-500 to-amber-400',
-    glow: 'shadow-orange-500/25',
-    badge: 'bg-orange-50 text-orange-700 border-orange-200',
+    gradient: 'from-orange-500 to-amber-500',
+    iconBg: 'bg-orange-500',
+    accent: 'text-orange-600',
   },
 };
 
-const fallbackTheme = {
-  icon: <MapPin className="h-5 w-5" />,
-  gradient: 'from-gray-500 to-gray-400',
-  glow: 'shadow-gray-500/25',
-  badge: 'bg-gray-50 text-gray-700 border-gray-200',
-};
+const StationLeaf = ({ station, side }: { station: PublicStationType; side: 'left' | 'right' }) => {
+  const theme = STATION_THEME[station.order] ?? {
+    icon: <MapPin className="h-5 w-5" />,
+    gradient: 'from-gray-500 to-gray-600',
+    iconBg: 'bg-gray-500',
+    accent: 'text-gray-600',
+  };
 
-const StationCard = ({ station }: { station: PublicStationType }) => {
-  const theme = STATION_THEMES[station.order] ?? fallbackTheme;
+  const isLeft = side === 'left';
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-gray-200/60 bg-white shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl">
-      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${theme.gradient}`} />
-      <div
-        className={`absolute -top-20 -right-20 h-40 w-40 rounded-full bg-gradient-to-br ${theme.gradient} opacity-[0.04] blur-2xl transition-all duration-500 group-hover:opacity-[0.08]`}
-      />
-
-      <div className="relative px-5 pt-5 pb-4 sm:px-6 sm:pt-6 sm:pb-5">
-        <div className="mb-4 flex items-start gap-4">
-          <div
-            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${theme.gradient} ${theme.glow} text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl`}
-          >
-            {theme.icon}
-          </div>
-          <div className="min-w-0 flex-1">
-            <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${theme.badge}`}>
-              Trạm {station.order}
-            </span>
-            <h3 className="mt-1.5 text-[17px] leading-snug font-bold text-gray-900">{station.name}</h3>
-          </div>
-        </div>
-
-        {station.description && (
-          <p className="mb-4 line-clamp-3 text-[13px] leading-relaxed text-gray-500">{station.description}</p>
+    <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-0">
+      {/* Left content / spacer */}
+      <div className={`${isLeft ? 'pr-6 sm:pr-8' : ''}`}>
+        {isLeft && (
+          <Card className="group border-0 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <CardContent className="p-5 sm:p-6">
+              <div className="mb-3 flex items-center justify-end gap-2">
+                <Badge variant="secondary" className={`${theme.accent} font-semibold`}>
+                  Trạm {station.order}
+                </Badge>
+              </div>
+              <h3 className="mb-2 text-right text-base font-bold text-gray-900 sm:text-lg">{station.name}</h3>
+              {station.description && (
+                <p className="mb-4 text-right text-sm leading-relaxed text-gray-500">{station.description}</p>
+              )}
+              <div className="flex items-center justify-end gap-4">
+                <div className="flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5 text-gray-400" />
+                  <span className="text-sm font-semibold text-gray-700">{station.playerCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Star className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="text-sm font-semibold text-gray-700">{station.avgScore}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
+      </div>
 
-        <div className="flex items-center gap-5 border-t border-gray-100 pt-3.5">
-          <div className="flex items-center gap-2">
-            <div className={`flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br ${theme.gradient} bg-opacity-10`}>
-              <Trophy className="h-3.5 w-3.5 text-white" />
-            </div>
-            <div>
-              <span className="text-sm font-bold text-gray-900">{station.avgScore}</span>
-              <span className="ml-1 text-[11px] text-gray-400">điểm TB</span>
-            </div>
-          </div>
-          <div className="h-4 w-px bg-gray-200" />
-          <div className="flex items-center gap-2">
-            <div className={`flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br ${theme.gradient} bg-opacity-10`}>
-              <Users className="h-3.5 w-3.5 text-white" />
-            </div>
-            <div>
-              <span className="text-sm font-bold text-gray-900">{station.playerCount}</span>
-              <span className="ml-1 text-[11px] text-gray-400">đã chơi</span>
-            </div>
-          </div>
+      {/* Center node */}
+      <div className="relative z-10 flex flex-col items-center">
+        <div
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br ${theme.gradient} text-white shadow-lg ring-4 ring-white transition-transform duration-300 hover:scale-110`}
+        >
+          {theme.icon}
         </div>
+      </div>
+
+      {/* Right content / spacer */}
+      <div className={`${!isLeft ? 'pl-6 sm:pl-8' : ''}`}>
+        {!isLeft && (
+          <Card className="group border-0 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <CardContent className="p-5 sm:p-6">
+              <div className="mb-3 flex items-center gap-2">
+                <Badge variant="secondary" className={`${theme.accent} font-semibold`}>
+                  Trạm {station.order}
+                </Badge>
+              </div>
+              <h3 className="mb-2 text-base font-bold text-gray-900 sm:text-lg">{station.name}</h3>
+              {station.description && (
+                <p className="mb-4 text-sm leading-relaxed text-gray-500">{station.description}</p>
+              )}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5 text-gray-400" />
+                  <span className="text-sm font-semibold text-gray-700">{station.playerCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Star className="h-3.5 w-3.5 text-amber-400" />
+                  <span className="text-sm font-semibold text-gray-700">{station.avgScore}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
 };
 
-const StationTimeline = ({ station, index }: { station: PublicStationType; index: number }) => {
-  const theme = STATION_THEMES[station.order] ?? fallbackTheme;
-  const isLeft = index % 2 === 0;
+const MobileStationCard = ({ station }: { station: PublicStationType }) => {
+  const theme = STATION_THEME[station.order] ?? {
+    icon: <MapPin className="h-5 w-5" />,
+    gradient: 'from-gray-500 to-gray-600',
+    iconBg: 'bg-gray-500',
+    accent: 'text-gray-600',
+  };
 
   return (
-    <div
-      className="animate-fade-in-up relative"
-      style={{ animationDelay: `${index * 150}ms`, animationFillMode: 'both' }}
-    >
-      {/* Desktop */}
-      <div className="hidden md:grid md:grid-cols-[1fr_80px_1fr] md:items-center">
-        <div className={isLeft ? '' : 'col-start-3'}>{isLeft && <StationCard station={station} />}</div>
-
-        <div className={`col-start-2 flex justify-center ${isLeft ? '' : 'row-start-1'}`}>
-          <div
-            className={`relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br ${theme.gradient} ${theme.glow} text-white shadow-lg ring-[5px] ring-white transition-all duration-500 hover:scale-125`}
-          >
-            {theme.icon}
-            <div className={`absolute inset-0 animate-ping rounded-full bg-gradient-to-br ${theme.gradient} opacity-20`} />
-          </div>
+    <div className="relative flex gap-4">
+      {/* Vertical line + node */}
+      <div className="flex flex-col items-center">
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${theme.gradient} text-white shadow-lg ring-4 ring-white`}
+        >
+          {theme.icon}
         </div>
-
-        <div className={isLeft ? 'col-start-3' : 'col-start-1 row-start-1'}>{!isLeft && <StationCard station={station} />}</div>
+        <div className="mt-2 w-0.5 flex-1 rounded-full bg-gradient-to-b from-gray-200 to-transparent" />
       </div>
 
-      {/* Mobile */}
-      <div className="grid grid-cols-[48px_1fr] items-center gap-4 md:hidden">
-        <div className="flex justify-center">
-          <div
-            className={`relative z-10 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br ${theme.gradient} ${theme.glow} text-white shadow-lg ring-4 ring-white`}
-          >
-            {theme.icon}
+      {/* Card */}
+      <Card className="mb-6 flex-1 border-0 shadow-md">
+        <CardContent className="p-4">
+          <Badge variant="secondary" className={`${theme.accent} mb-2 font-semibold`}>
+            Trạm {station.order}
+          </Badge>
+          <h3 className="mb-1.5 text-base font-bold text-gray-900">{station.name}</h3>
+          {station.description && (
+            <p className="mb-3 text-sm leading-relaxed text-gray-500">{station.description}</p>
+          )}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <Users className="h-3.5 w-3.5 text-gray-400" />
+              <span className="text-sm font-semibold text-gray-700">{station.playerCount}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Star className="h-3.5 w-3.5 text-amber-400" />
+              <span className="text-sm font-semibold text-gray-700">{station.avgScore}</span>
+            </div>
           </div>
-        </div>
-        <StationCard station={station} />
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
@@ -149,105 +176,96 @@ const HomePage = () => {
   const stations = (data?.result ?? []).filter((s) => !s.isReward);
 
   return (
-    <div className="py-6 sm:py-10">
+    <div className="py-6">
       {/* Hero */}
-      <section className="animate-fade-in-down relative mb-16 overflow-hidden text-center sm:mb-20">
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="bg-primary/8 absolute top-10 left-1/4 h-72 w-72 rounded-full blur-3xl" />
-          <div className="absolute top-20 right-1/4 h-56 w-56 rounded-full bg-blue-400/8 blur-3xl" />
+      <section className="mb-12 text-center sm:mb-16">
+        <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center sm:h-24 sm:w-24">
+          <img src="/fcode.png" alt="F-Code" className="relative z-10 h-full w-full" />
+          <div className="bg-primary/25 absolute inset-0 animate-pulse rounded-full blur-xl"></div>
         </div>
-
-        <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center sm:h-28 sm:w-28">
-          <img src="/fcode.png" alt="F-Code" className="animate-floating relative z-10 h-full w-full drop-shadow-lg" />
-          <div className="bg-primary/20 absolute inset-0 scale-150 rounded-full blur-2xl" />
-          <div className="absolute inset-0 scale-[2] rounded-full bg-gradient-to-br from-blue-400/10 to-emerald-400/10 blur-3xl" />
-        </div>
-
-        <Badge variant="outline" className="animate-fade-in mb-4 gap-1.5 px-4 py-1.5 text-sm">
-          <Sparkles className="h-3.5 w-3.5" />
-          CLB F-Code — EIU
-        </Badge>
-
-        <h1 className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-600 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl lg:text-6xl">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
           Exploring IT Universe
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-500 sm:text-lg">
-          Khám phá vũ trụ công nghệ thông tin cùng CLB F-Code
-          <br className="hidden sm:block" />
-          Trải nghiệm các trạm thử thách thú vị và nhận thưởng hấp dẫn!
+        <p className="mx-auto mt-3 max-w-xl text-base text-gray-500 sm:text-lg">
+          Khám phá vũ trụ công nghệ thông tin cùng CLB F-Code — Trải nghiệm các trạm thử thách thú vị!
         </p>
 
         {!isAuthenticated && (
-          <div className="animate-fade-in-up mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div className="mt-7 flex flex-col items-center gap-3 sm:mt-9 sm:flex-row sm:justify-center">
             <Link to="/register">
-              <Button size="lg" className="gap-2 px-8 text-[15px] shadow-md shadow-primary/25 transition-all hover:shadow-lg hover:shadow-primary/30">
-                <Zap className="h-4.5 w-4.5" />
-                Đăng ký tham gia
+              <Button size="lg" className="gap-2 px-8 text-base shadow-md">
+                <TrendingUp className="h-5 w-5" />
+                Đăng ký ngay
               </Button>
             </Link>
             <Link to="/login">
-              <Button variant="outline" size="lg" className="gap-2 px-8 text-[15px]">
+              <Button variant="outline" size="lg" className="px-8 text-base">
                 Đăng nhập
-                <ChevronRight className="h-4 w-4" />
               </Button>
             </Link>
           </div>
         )}
       </section>
 
-      {/* Timeline */}
+      {/* Station timeline */}
       {stations.length > 0 && (
         <section>
-          <div className="animate-fade-in mb-12 text-center sm:mb-16">
-            <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl">
-              <MapPin className="text-primary h-6 w-6" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Hành trình khám phá</h2>
-            <p className="mt-2.5 text-sm text-gray-500">
-              {stations.length} trạm thử thách đang chờ bạn chinh phục
+          <div className="mb-10 text-center sm:mb-12">
+            <Badge variant="outline" className="mb-3 px-3 py-1 text-sm font-medium">
+              <MapPin className="mr-1.5 h-3.5 w-3.5" />
+              {stations.length} trạm hoạt động
+            </Badge>
+            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Hành trình thử thách</h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">
+              Chinh phục từng trạm theo thứ tự để thu thập điểm và nhận thưởng
             </p>
           </div>
 
-          <div className="relative mx-auto max-w-4xl">
-            {/* Trunk line — desktop center, mobile left */}
-            <div className="absolute top-6 bottom-6 left-[23px] w-[3px] rounded-full bg-gradient-to-b from-blue-200 via-emerald-200 via-60% via-violet-200 to-orange-200 md:left-1/2 md:-translate-x-1/2" />
+          {/* Desktop: alternating left/right tree */}
+          <div className="relative mx-auto hidden max-w-4xl md:block">
+            {/* Center trunk line */}
+            <div className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-gray-200 via-gray-300 to-gray-200" />
 
-            <div className="flex flex-col gap-12 md:gap-16">
-              {stations.map((station, index) => (
-                <StationTimeline key={station.id} station={station} index={index} />
+            <div className="flex flex-col gap-10">
+              {stations.map((station, i) => (
+                <StationLeaf key={station.id} station={station} side={i % 2 === 0 ? 'left' : 'right'} />
               ))}
             </div>
 
-            {/* End cap */}
-            <div className="relative mt-12 flex justify-start pl-[11px] md:justify-center md:pl-0">
-              <div className="bg-primary z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-lg shadow-primary/25 ring-[5px] ring-white">
-                <Sparkles className="h-3.5 w-3.5 text-white" />
+            {/* Bottom cap */}
+            <div className="relative mt-6 flex justify-center">
+              <div className="z-10 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 ring-4 ring-white">
+                <Star className="h-4 w-4 text-gray-500" />
               </div>
             </div>
           </div>
 
-          {/* Guest CTA */}
-          {!isAuthenticated && (
-            <div className="animate-fade-in-up relative mx-auto mt-16 max-w-2xl overflow-hidden rounded-2xl border border-gray-200/60 bg-white p-8 text-center shadow-sm sm:mt-20 sm:p-10">
-              <div className="pointer-events-none absolute inset-0 -z-10">
-                <div className="bg-primary/5 absolute -top-10 -right-10 h-40 w-40 rounded-full blur-2xl" />
-                <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-blue-400/5 blur-2xl" />
-              </div>
+          {/* Mobile: single column timeline */}
+          <div className="mx-auto max-w-lg md:hidden">
+            {stations.map((station) => (
+              <MobileStationCard key={station.id} station={station} />
+            ))}
+          </div>
 
-              <div className="bg-primary/10 mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl">
-                <Zap className="text-primary h-8 w-8" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">Sẵn sàng thử thách?</h3>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-gray-500">
-                Đăng ký tài khoản ngay để tham gia chương trình, chinh phục các trạm và nhận thưởng hấp dẫn!
-              </p>
-              <Link to="/register" className="mt-6 inline-block">
-                <Button size="lg" className="gap-2 px-10 shadow-md shadow-primary/25 transition-all hover:shadow-lg hover:shadow-primary/30">
-                  <Users className="h-5 w-5" />
-                  Tham gia ngay
-                </Button>
-              </Link>
-            </div>
+          {/* CTA for guests */}
+          {!isAuthenticated && (
+            <Card className="mx-auto mt-12 max-w-lg border-dashed bg-gray-50/80 sm:mt-16">
+              <CardContent className="px-6 py-8 text-center">
+                <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full">
+                  <TrendingUp className="text-primary h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">Sẵn sàng thử thách?</h3>
+                <p className="mx-auto mt-2 max-w-sm text-sm text-gray-500">
+                  Đăng ký tài khoản ngay để tham gia chương trình, chinh phục các trạm và nhận thưởng!
+                </p>
+                <Link to="/register" className="mt-5 inline-block">
+                  <Button size="lg" className="gap-2 px-8 shadow-md">
+                    <Users className="h-5 w-5" />
+                    Tham gia ngay
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           )}
         </section>
       )}
