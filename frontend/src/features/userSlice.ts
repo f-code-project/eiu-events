@@ -12,7 +12,7 @@ interface UserState {
 
 const initialState: UserState = {
   user: null,
-  isLoading: false,
+  isLoading: !!localStorage.getItem('login'),
   isAuthenticated: false,
 };
 
@@ -28,7 +28,11 @@ export const userSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
     },
-    clearUser: () => initialState,
+    clearUser: () => ({
+      user: null,
+      isLoading: false,
+      isAuthenticated: false,
+    }),
   },
   extraReducers: (builder) => {
     builder

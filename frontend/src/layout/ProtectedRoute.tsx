@@ -4,6 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import Loading from '~/components/Loading';
 import NoAccess from '~/components/NoAccess';
 import useAuth from '~/hooks/useAuth';
+import LocalStorage from '~/utils/localStorage';
 
 import type { RoleType } from '~/constants/enums';
 
@@ -15,10 +16,11 @@ const ProtectedRoute = ({ roleAccess }: Props) => {
   const { isLoading, isAuthenticated, role, fetchUser } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated && !isLoading) {
+    const hasLogin = LocalStorage.getItem('login');
+    if (hasLogin && !isAuthenticated) {
       fetchUser();
     }
-  }, [isAuthenticated, isLoading, fetchUser]);
+  }, []);
 
   if (isLoading) return <Loading />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;

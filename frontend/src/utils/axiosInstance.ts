@@ -44,6 +44,7 @@ privateApi.interceptors.response.use(
         return privateApi(originalRequest);
       } catch (err) {
         processQueue(err, null);
+        localStorage.removeItem('login');
         window.location.href = '/login';
         return Promise.reject(err);
       } finally {

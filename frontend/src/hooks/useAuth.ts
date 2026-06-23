@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import AuthApi from '~/api-requests/auth.requests';
 import { clearUser, getInfo, setUser } from '~/features/userSlice';
 import { useAppDispatch, useAppSelector } from '~/hooks/useRedux';
+import LocalStorage from '~/utils/localStorage';
 
 const useAuth = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ const useAuth = () => {
     try {
       await AuthApi.logout();
     } finally {
+      LocalStorage.removeItem('login');
       dispatch(clearUser());
     }
   }, [dispatch]);
