@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 
 import { RoleType } from '~/constants/enums';
-import AdminLayout from '~/layout/AdminLayout';
 import MasterLayout from '~/layout/MasterLayout';
 import PlayerLayout from '~/layout/PlayerLayout';
 import ProtectedRoute from '~/layout/ProtectedRoute';
@@ -26,6 +25,18 @@ export const router = createBrowserRouter([
       { index: true, element: <div>Trang chủ EIU</div> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
+
+      {
+        path: 'admin',
+        element: <ProtectedRoute roleAccess={[RoleType.ADMIN]} />,
+        children: [
+          { index: true, element: <AdminDashboard /> },
+          { path: 'stations', element: <AdminStations /> },
+          { path: 'staff', element: <AdminStaff /> },
+          { path: 'players', element: <AdminPlayers /> },
+          { path: 'players/:id', element: <PlayerDetailPage /> },
+        ],
+      },
     ],
   },
   {
@@ -47,22 +58,6 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <StaffScoreEntry /> },
           { path: 'rewards', element: <RewardStation /> },
-        ],
-      },
-    ],
-  },
-  {
-    path: '/admin',
-    element: <ProtectedRoute roleAccess={[RoleType.ADMIN]} />,
-    children: [
-      {
-        element: <AdminLayout />,
-        children: [
-          { index: true, element: <AdminDashboard /> },
-          { path: 'stations', element: <AdminStations /> },
-          { path: 'staff', element: <AdminStaff /> },
-          { path: 'players', element: <AdminPlayers /> },
-          { path: 'players/:id', element: <PlayerDetailPage /> },
         ],
       },
     ],
