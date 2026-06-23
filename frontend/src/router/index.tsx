@@ -10,6 +10,7 @@ import AdminPlayers from '~/pages/Admin/Players';
 import PlayerDetailPage from '~/pages/Admin/Players/Detail';
 import AdminStaff from '~/pages/Admin/Staff';
 import AdminStations from '~/pages/Admin/Stations';
+import HomePage from '~/pages/Home';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
 import PlayerDashboard from '~/pages/Player';
@@ -22,7 +23,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <MasterLayout />,
     children: [
-      { index: true, element: <div>Trang chủ EIU</div> },
+      { index: true, element: <HomePage /> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
 

@@ -1,11 +1,16 @@
-import { privateApi } from '~/utils/axiosInstance';
+import { privateApi, publicApi } from '~/utils/axiosInstance';
 
 import type { ApiResponse } from '~/types/common';
-import type { StationType } from '~/types/station';
+import type { PublicStationType, StationType } from '~/types/station';
 
 class StationApi {
   static getAll = async () => {
     const response = await privateApi.get<ApiResponse<StationType[]>>('/stations');
+    return response.data;
+  };
+
+  static getPublic = async () => {
+    const response = await publicApi.get<ApiResponse<PublicStationType[]>>('/stations/public');
     return response.data;
   };
 
